@@ -1,0 +1,29 @@
+---
+# tasks file for vector-role
+- name: Create folder for unit-file
+  become: true
+  ansible.builtin.file:
+    path: "/etc/systemd/system/multi-user.target.wants/vector.service.d"
+    state: directory
+    mode: "0755"
+    owner: "root"
+    group: "root"
+
+- name: Create vector.service-file from template
+  become: true
+  ansible.builtin.template:
+    src: "vector.j2"
+    dest: "/etc/systemd/system/multi-user.target.wants/vector.service.d/override.conf"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+    backup: true
+
+- name: Install RPMs from Vector site
+  become: true
+  ansible.builtin.dnf:
+    name: "https://packages.timber.io/vector/{{ vector_version }}/{{ item }}-{{ vector_version }}-{{ vector_rpm_build }}.{{ vector_arch }}.rpm"
+    state: present
+    disable_gpg_check: true
+  with_items: "{{ vector_packages }}"
+  notify: Start vector service

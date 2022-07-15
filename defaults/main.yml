@@ -1,0 +1,10 @@
+---
+# defaults file for vector-role
+# User for run Vector
+vector_user: "vector"
+
+# Group for run Vector
+vector_group: "vector"
+
+# Environment file
+vector_environment_file: "/etc/default/vector"
